@@ -14,7 +14,6 @@
 .vscode
 .yarn-integrity
 coverage/
-dist/
 jspm_packages/
 lib-cov
 logs
