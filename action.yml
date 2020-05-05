@@ -1,18 +1,19 @@
-name: 'Amazon ECS "Deploy Task Definition" Action for GitHub Actions'
-description: 'Registers an Amazon ECS task definition, and deploys it to an ECS service'
+name: ECS "Deploy Task Definition To Scheduled Task" Action for GitHub Actions
+description: Registers an Amazon ECS task definition & deploys it to related ECS scheduled tasks
 branding:
-  icon: 'cloud'
-  color: 'orange'
+  color: orange
+  icon: cloud
 inputs:
-  task-definition:
-    description: 'The path to the ECS task definition file to register'
-    required: true
   cluster:
-    description: "The name of the ECS service's cluster.  Will default to the 'default' cluster"
+    default: default
+    description: The name of the ECS cluster hosting the scheduled task(s).
     required: false
+  task-definition:
+    description: The path to the ECS task definition file to register
+    required: true
 outputs:
   task-definition-arn:
-    description: 'The ARN of the registered ECS task definition'
+    description: The ARN of the registered ECS task definition
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: node12
+  main: dist/index.js
