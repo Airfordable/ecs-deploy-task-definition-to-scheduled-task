@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "eslint **.js",
     "package": "ncc build index.js -o dist",
-    "test": "eslint **.js && jest --coverage"
+      "test": "eslint **.js && jest --coverage",
+      "test:debug": "node --inspect-brk=0.0.0.0:5857 node_modules/.bin/jest --runInBand"
   },
   "repository": {
     "type": "git",
