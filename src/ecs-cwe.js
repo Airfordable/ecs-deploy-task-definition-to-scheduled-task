@@ -35,14 +35,14 @@
  * logic.
  */
 function simplifyTaskDefinitionArn(arn) {
-    // arn:aws:ecs:<REGION>:<ACCOUNT ID>:task-definition/<task-family-name>:<VERSION>
-    const splitArn = arn.split(':');
-    if (splitArn.length < 6 || !splitArn[5].startsWith('task-definition/'))
-        throw new Error(`Not task-definition ARN: ${arn}`);
+  // arn:aws:ecs:<REGION>:<ACCOUNT ID>:task-definition/<task-family-name>:<VERSION>
+  const splitArn = arn.split(':');
+  if (splitArn.length < 6 || !splitArn[5].startsWith('task-definition/'))
+    throw new Error(`Not task-definition ARN: ${arn}`);
 
-    // Cut it down to only the fields we care about; discard the rest.
-    splitArn.length = 6;
-    return splitArn.join(':');
+  // Cut it down to only the fields we care about; discard the rest.
+  splitArn.length = 6;
+  return splitArn.join(':');
 }
 
 /**
@@ -56,12 +56,12 @@ function simplifyTaskDefinitionArn(arn) {
  * cluster.
  */
 function filterNonEcsClusterTargets(targets, clusterName) {
-    // arn:aws:ecs:<REGION>:<ACCOUNT ID>:cluster/<CLUSTER NAME>
-    const arnClusterName = `cluster/${clusterName}`;
-    return targets.filter((target) => {
-        const splitArn = target.Arn.split(':');
-        return splitArn[2] === 'ecs' && splitArn[5] === arnClusterName;
-    });
+  // arn:aws:ecs:<REGION>:<ACCOUNT ID>:cluster/<CLUSTER NAME>
+  const arnClusterName = `cluster/${clusterName}`;
+  return targets.filter(target => {
+    const splitArn = target.Arn.split(':');
+    return splitArn[2] === 'ecs' && splitArn[5] === arnClusterName;
+  });
 }
 
 /**
@@ -76,15 +76,15 @@ function filterNonEcsClusterTargets(targets, clusterName) {
  * ARN (all previous versions of this task)
  */
 function filterUnrelatedTaskDefTargets(targets, newTaskDefArn) {
-    const newTaskDefArnSimple = simplifyTaskDefinitionArn(newTaskDefArn);
-    return targets.filter((target) => {
-        const arn = target.EcsParameters.TaskDefinitionArn;
-        const taskDefArnSimple = simplifyTaskDefinitionArn(arn);
-        return taskDefArnSimple === newTaskDefArnSimple;
-    });
+  const newTaskDefArnSimple = simplifyTaskDefinitionArn(newTaskDefArn);
+  return targets.filter(target => {
+    const arn = target.EcsParameters.TaskDefinitionArn;
+    const taskDefArnSimple = simplifyTaskDefinitionArn(arn);
+    return taskDefArnSimple === newTaskDefArnSimple;
+  });
 }
 
 module.exports = {
-    filterNonEcsClusterTargets,
-    filterUnrelatedTaskDefTargets,
-}
+  filterNonEcsClusterTargets,
+  filterUnrelatedTaskDefTargets,
+};

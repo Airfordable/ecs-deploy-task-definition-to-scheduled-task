@@ -1,16 +1,52 @@
 on:
-  [pull_request]
+  pull_request:
+  push:
+    branches:
+      - f/**
+      - p/**
+      - renovate/**
 
-name: Check
+name: CI
 
 jobs:
-  check:
+  lint:
     name: Run Unit Tests
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Run tests
-      run: |
-        npm ci
-        npm test
+      - name: Fetch all branches and tags
+        run: git fetch --prune --unshallow
+
+      - name: NPM Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
+
+      - name: NPM Install
+        run: npm ci
+
+      # - name: Commitlint
+      #   if: ${{ github.event_name == 'pull_request' }}
+      #   run: npx commitlint --from origin/${{ github.base_ref }} --to origin/${{ github.head_ref }}
+
+      - name: Lint
+        run: npm run lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: NPM Cache
+        uses: actions/cache@v1
+        with:
+          key: ${{ runner.os }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
+          path: ~/.npm
+
+      - name: NPM Install
+        run: npm ci
+
+      - name: Test
+        run: npm run test

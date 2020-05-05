@@ -11,7 +11,7 @@ const IGNORED_TASK_DEFINITION_ATTRIBUTES = [
   'taskDefinitionArn',
   'requiresAttributes',
   'revision',
-  'status'
+  'status',
 ];
 
 function isEmptyValue(value) {
@@ -36,7 +36,7 @@ function emptyValueReplacer(_, value) {
   }
 
   if (typeof value === 'object') {
-    for (var childValue of Object.values(value)) {
+    for (const childValue of Object.values(value)) {
       if (!isEmptyValue(childValue)) {
         // the object has at least one non-empty property
         return value;
@@ -54,12 +54,14 @@ function cleanNullKeys(obj) {
 }
 
 function removeIgnoredAttributes(taskDef) {
-  for (var attribute of IGNORED_TASK_DEFINITION_ATTRIBUTES) {
+  for (const attribute of IGNORED_TASK_DEFINITION_ATTRIBUTES) {
     if (taskDef[attribute]) {
-      core.warning(`Ignoring property '${attribute}' in the task definition file. ` +
-        'This property is returned by the Amazon ECS DescribeTaskDefinition API and may be shown in the ECS console, ' +
-        'but it is not a valid field when registering a new task definition. ' +
-        'This field can be safely removed from your task definition file.');
+      core.warning(
+        `Ignoring property '${attribute}' in the task definition file. ` +
+          'This property is returned by the Amazon ECS DescribeTaskDefinition API and may be shown in the ECS console, ' +
+          'but it is not a valid field when registering a new task definition. ' +
+          'This field can be safely removed from your task definition file.'
+      );
       delete taskDef[attribute];
     }
   }
@@ -83,83 +85,115 @@ function removeIgnoredAttributes(taskDef) {
  * }
  */
 
-async function processCloudwatchEventRule(cwe, rule, clusterName, newTaskDefArn) {
+async function processCloudwatchEventRule(
+  cwe,
+  rule,
+  clusterName,
+  newTaskDefArn
+) {
   const ruleName = rule.Name;
   core.debug(`Looking up Targets for rule ${ruleName}`);
 
-  const data = await cwe.listTargetsByRule({
-    Rule: ruleName,
-  }).promise();
+  const data = await cwe
+    .listTargetsByRule({
+      Rule: ruleName,
+    })
+    .promise();
   const ruleTargets = data && data.Targets;
   core.debug(`Rule targets for ${ruleName}: ${JSON.stringify(ruleTargets)}`);
 
   if (!ruleTargets || !ruleTargets.length) return null;
 
   // Return all targets that are relevant to this cluster.
-  const ecsClusterTargets = ecsCwe.filterNonEcsClusterTargets(ruleTargets, clusterName);
-  core.debug(`ECS ${clusterName} targets for ${ruleName}: ${JSON.stringify(ecsClusterTargets)}`);
+  const ecsClusterTargets = ecsCwe.filterNonEcsClusterTargets(
+    ruleTargets,
+    clusterName
+  );
+  core.debug(
+    `ECS ${clusterName} targets for ${ruleName}: ${JSON.stringify(
+      ecsClusterTargets
+    )}`
+  );
 
   // Of the relevant targets, find the ones whose ARN task matches new ARN (minus version)
-  const ecsClusterTaskTargets = ecsCwe.filterUnrelatedTaskDefTargets(ecsClusterTargets, newTaskDefArn);
-  core.debug(`Task targets for ${ruleName}: ${JSON.stringify(ecsClusterTaskTargets)}`);
+  const ecsClusterTaskTargets = ecsCwe.filterUnrelatedTaskDefTargets(
+    ecsClusterTargets,
+    newTaskDefArn
+  );
+  core.debug(
+    `Task targets for ${ruleName}: ${JSON.stringify(ecsClusterTaskTargets)}`
+  );
 
   // Bail if nothing to update.
   if (!ecsClusterTaskTargets.length) return null;
 
   // Now we just have to update all the targets that survived.
-  const updatedTargets = ecsClusterTaskTargets.map((target) => {
-      target.EcsParameters.TaskDefinitionArn = newTaskDefArn;
-      return target;
+  const updatedTargets = ecsClusterTaskTargets.map(target => {
+    target.EcsParameters.TaskDefinitionArn = newTaskDefArn;
+    return target;
   });
-  core.debug(`Updated targets for ${ruleName}: ${JSON.stringify(updatedTargets)}`);
+  core.debug(
+    `Updated targets for ${ruleName}: ${JSON.stringify(updatedTargets)}`
+  );
 
-  return cwe.putTargets({
-    Rule: ruleName,
-    Targets: updatedTargets,
-  }).promise();
+  return cwe
+    .putTargets({
+      Rule: ruleName,
+      Targets: updatedTargets,
+    })
+    .promise();
 }
 
 async function run() {
   try {
     const awsCommonOptions = {
-        customUserAgent: 'amazon-ecs-deploy-task-definition-for-github-actions',
+      customUserAgent: 'amazon-ecs-deploy-task-definition-for-github-actions',
     };
 
     const ecs = new aws.ECS(awsCommonOptions);
     const cwe = new aws.CloudWatchEvents(awsCommonOptions);
 
     // Get inputs
-    const taskDefinitionFile = core.getInput('task-definition', { required: true });
-      const cluster = core.getInput('cluster', { required: false }) || 'default';
+    const taskDefinitionFile = core.getInput('task-definition', {
+      required: true,
+    });
+    const cluster = core.getInput('cluster', { required: false }) || 'default';
 
     // Register the task definition
     core.debug('Registering the task definition');
-    const taskDefPath = path.isAbsolute(taskDefinitionFile) ?
-      taskDefinitionFile :
-      path.join(process.env.GITHUB_WORKSPACE, taskDefinitionFile);
+    const taskDefPath = path.isAbsolute(taskDefinitionFile)
+      ? taskDefinitionFile
+      : path.join(process.env.GITHUB_WORKSPACE, taskDefinitionFile);
     const fileContents = fs.readFileSync(taskDefPath, 'utf8');
-    const taskDefContents = removeIgnoredAttributes(cleanNullKeys(yaml.parse(fileContents)));
+    const taskDefContents = removeIgnoredAttributes(
+      cleanNullKeys(yaml.parse(fileContents))
+    );
     let registerResponse;
     try {
-        registerResponse = await ecs.registerTaskDefinition(taskDefContents).promise();
-        console.log(`Register response: ${JSON.stringify(registerResponse)}`);
+      registerResponse = await ecs
+        .registerTaskDefinition(taskDefContents)
+        .promise();
+      core.debug(`Register response: ${JSON.stringify(registerResponse)}`);
     } catch (error) {
-      core.setFailed("Failed to register task definition in ECS: " + error.message);
-      core.debug("Task definition contents:");
+      core.setFailed(
+        'Failed to register task definition in ECS: ' + error.message
+      );
+      core.debug('Task definition contents:');
       core.debug(JSON.stringify(taskDefContents, undefined, 4));
-      throw(error);
+      throw error;
     }
     const taskDefArn = registerResponse.taskDefinition.taskDefinitionArn;
     core.setOutput('task-definition-arn', taskDefArn);
 
     // TODO: Batch this?
     const data = await cwe.listRules().promise();
-    const rules = data && data.Rules || [];
-    await Promise.all(rules.map((rule) => {
-      return processCloudwatchEventRule(cwe, rule, cluster, taskDefArn);
-    }));
-  }
-  catch (error) {
+    const rules = (data && data.Rules) || [];
+    await Promise.all(
+      rules.map(rule => {
+        return processCloudwatchEventRule(cwe, rule, cluster, taskDefArn);
+      })
+    );
+  } catch (error) {
     core.setFailed(error.message);
     core.debug(error.stack);
   }
@@ -169,5 +203,5 @@ module.exports = run;
 
 /* istanbul ignore next */
 if (require.main === module) {
-    run();
+  run();
 }

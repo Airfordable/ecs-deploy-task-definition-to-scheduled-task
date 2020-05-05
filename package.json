@@ -1,30 +1,51 @@
 {
-  "name": "aws-actions-amazon-ecs-deploy-task-definition",
+  "name": "ecs-deploy-task-definition-to-scheduled-task",
   "version": "1.3.0",
-  "description": "Registers an Amazon ECS task definition and deploys it to an ECS service.",
-  "main": "index.js",
+  "description": "Registers an Amazon ECS task definition and deploys it to ECS scheduled task(s).",
+  "main": "src/index.js",
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!**/__tests__/**",
+      "!**/node_modules/**",
+      "!**/dist/**"
+    ],
+    "testEnvironment": "jest-environment-node"
+  },
+  "prettier": {
+    "htmlWhitespaceSensitivity": "ignore",
+    "trailingComma": "es5",
+    "singleQuote": true
+  },
   "scripts": {
-    "lint": "eslint **.js",
-    "package": "ncc build index.js -o dist",
-      "test": "eslint **.js && jest --coverage",
-      "test:debug": "node --inspect-brk=0.0.0.0:5857 node_modules/.bin/jest --runInBand"
+    "eslint": "eslint src/**.js",
+    "eslint:fix": "eslint src/**.js --fix",
+    "lint": "run-s {prettier:check,eslint}",
+    "package": "ncc build src/index.js -o dist",
+    "prettier": "prettier './**/*.{js,json,md,yml}' '!./coverage/**' '!./dist/**'",
+    "prettier:check": "npm run prettier -- --check",
+    "prettier:fix": "npm run prettier -- --write",
+    "test": "jest",
+    "test:debug": "NODE_OPTIONS='--inspect-brk=0.0.0.0:5857' npm run test -- --runInBand"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aws-actions/amazon-ecs-deploy-task-definition.git"
+    "url": "git+https://github.com/airfordable/ecs-deploy-task-definition-to-scheduled-task.git"
   },
   "keywords": [
     "AWS",
-    "GitHub",
     "Actions",
+    "Airfordable",
+    "GitHub",
     "JavaScript"
   ],
-  "author": "AWS",
+  "author": "Aifordable, AWS",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/aws-actions/amazon-ecs-deploy-task-definition/issues"
+    "url": "https://github.com/airfordable/ecs-deploy-task-definition-to-scheduled-task/issues"
   },
-  "homepage": "https://github.com/aws-actions/amazon-ecs-deploy-task-definition#readme",
+  "homepage": "https://github.com/airfordable/ecs-deploy-task-definition-to-scheduled-task#readme",
   "dependencies": {
     "@actions/core": "^1.2.4",
     "aws-sdk": "^2.667.0",
@@ -33,6 +54,13 @@
   "devDependencies": {
     "@zeit/ncc": "^0.22.0",
     "eslint": "^6.8.0",
-    "jest": "^25.5.3"
+    "eslint-config-prettier": "6.11.0",
+    "eslint-plugin-import": "2.20.2",
+    "eslint-plugin-jest": "23.8.2",
+    "eslint-plugin-prettier": "3.1.3",
+    "jest": "^25.5.3",
+    "jest-environment-node": "24.9.0",
+    "npm-run-all": "4.1.5",
+    "prettier": "1.19.1"
   }
 }
