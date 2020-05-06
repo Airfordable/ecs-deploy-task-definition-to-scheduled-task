@@ -7,19 +7,35 @@ name: Package
 
 jobs:
   check:
-    name: Package distribution file
+    name: Test & Package distribution file
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           ref: master
+
+      - name: Fetch all branches and tags
+        run: git fetch --prune --unshallow
+
+      - name: NPM Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
+
+      - name: NPM Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test
+
       - name: Package
-        run: |
-          npm ci
-          npm lint
-          npm test
-          npm run package
+        run: npm run package
+
       - name: Commit
         run: |
           git config --global user.name "GitHub Actions"

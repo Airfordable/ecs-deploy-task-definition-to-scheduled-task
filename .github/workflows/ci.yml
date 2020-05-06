@@ -10,9 +10,12 @@ name: CI
 
 jobs:
   lint:
-    name: Run Unit Tests
+    name: Lint
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Fetch all branches and tags
         run: git fetch --prune --unshallow
 
