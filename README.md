@@ -17,7 +17,7 @@ Registers an Amazon ECS task definition and deploys it to scheduled tasks in a g
 
 ## Acknowledgements
 
-This project is a fork of the [amazon-ecs-deploy-task-definition](https://github.com/aws-actions/amazon-ecs-deploy-task-definition) that has been modified and re-tooled to work with ECS scheduled tasks.
+This project is a fork of the [amazon-ecs-deploy-task-definition](https://github.com/aws-actions/amazon-ecs-deploy-task-definition) that has been modified and re-tooled to work with ECS scheduled tasks.  As such its initial release version starts at 2.0.0. Be sure to use the correct tag.
 
 ## Usage
 
@@ -25,7 +25,7 @@ The action assumes you have already setup 1 or more tasks to run as a scheduled 
 
 ```yaml
 - name: Deploy to Amazon ECS Scheduled Tasks
-  uses: airfordable/ecs-deploy-task-definition-to-scheduled-task@v1.0.0
+  uses: airfordable/ecs-deploy-task-definition-to-scheduled-task@v2.0.0
   with:
     cluster: my-cluster
     task-definition: task-definition.json
