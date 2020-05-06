@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - f/**
+      - master
+      - next
       - p/**
       - renovate/**
 
