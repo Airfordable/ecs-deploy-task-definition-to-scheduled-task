@@ -158,6 +158,7 @@ async function run() {
       required: true,
     });
     const cluster = core.getInput('cluster', { required: false }) || 'default';
+    const rulePrefix = core.getInput('rule-prefix', { required: false }) || '';
 
     // Register the task definition
     core.debug('Registering the task definition');
@@ -189,9 +190,13 @@ async function run() {
     const data = await cwe.listRules().promise();
     const rules = (data && data.Rules) || [];
     await Promise.all(
-      rules.map(rule => {
-        return processCloudwatchEventRule(cwe, rule, cluster, taskDefArn);
-      })
+      rules
+        .filter(rule => {
+          return rule.Name.startsWith(rulePrefix);
+        })
+        .map(rule => {
+          return processCloudwatchEventRule(cwe, rule, cluster, taskDefArn);
+        })
     );
   } catch (error) {
     core.setFailed(error.message);

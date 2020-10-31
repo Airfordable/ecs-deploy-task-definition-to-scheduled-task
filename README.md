@@ -21,7 +21,7 @@ This project is a fork of the [amazon-ecs-deploy-task-definition](https://github
 
 ## Usage
 
-The action assumes you have already setup 1 or more tasks to run as a scheduled task in the ECS environment. This action will update _all_ of the tasks who cluster and task ARN (without version) match existing scheduled actions. To use this action simply add the following step to your deploy process:
+The action assumes you have already setup 1 or more tasks to run as a scheduled task in the ECS environment. This action will update _all_ of the tasks who cluster, task ARN (without version), and rule-prefix match existing scheduled actions or cloudwatch events. To use this action simply add the following step to your deploy process:
 
 ```yaml
 - name: Deploy to Amazon ECS Scheduled Tasks
@@ -29,6 +29,7 @@ The action assumes you have already setup 1 or more tasks to run as a scheduled 
   with:
     cluster: my-cluster
     task-definition: task-definition.json
+    rule-prefix: my-rule-prefix-
 ```
 
 The action can be passed a `task-definition` generated dynamically via [the `aws-actions/amazon-ecs-render-task-definition` action](https://github.com/aws-actions/amazon-ecs-render-task-definition).
