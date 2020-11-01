@@ -1,5 +1,12 @@
 {
-  "extends": [
-    "config:base"
-  ]
+  "automerge": true,
+  "baseBranches": ["master"],
+  "commitMessagePrefix": "build: ",
+  "enabled": true,
+  "extends": ["config:base"],
+  "labels": ["bot:renovate"],
+  "major": {
+    "automerge": false
+  },
+  "reviewers": ["stieg"]
 }

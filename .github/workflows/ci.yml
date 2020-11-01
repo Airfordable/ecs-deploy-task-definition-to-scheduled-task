@@ -4,9 +4,6 @@ on:
     branches:
       - f/**
       - master
-      - next
-      - p/**
-      - renovate/**
 
 name: CI
 
