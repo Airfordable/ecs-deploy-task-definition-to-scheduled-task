@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - f/**
-      - master
+      - main
 
 name: CI
 
@@ -14,9 +14,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Fetch all branches and tags
-        run: git fetch --prune --unshallow
 
       - name: NPM Cache
         uses: actions/cache@v1

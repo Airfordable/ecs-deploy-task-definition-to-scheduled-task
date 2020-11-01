@@ -1,6 +1,6 @@
 {
   "automerge": true,
-  "baseBranches": ["master"],
+  "baseBranches": ["main"],
   "commitMessagePrefix": "build: ",
   "enabled": true,
   "extends": ["config:base"],
