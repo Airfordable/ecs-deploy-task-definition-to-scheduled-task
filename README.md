@@ -27,12 +27,12 @@ The action assumes you have already setup 1 or more tasks to run as a scheduled 
 - name: Deploy to Amazon ECS Scheduled Tasks
   uses: airfordable/ecs-deploy-task-definition-to-scheduled-task@v2.0.0
   with:
-    cluster: my-cluster
+    cluster: my-cluster (optional, defaults to 'default')
+    rule-prefix: my-rule-prefix (optional, defaults to '')
     task-definition: task-definition.json
-    rule-prefix: my-rule-prefix-
 ```
 
-The action can be passed a `task-definition` generated dynamically via [the `aws-actions/amazon-ecs-render-task-definition` action](https://github.com/aws-actions/amazon-ecs-render-task-definition).
+The action requires a `task-definition`. Your `task-definition` will likely be dynamically generated via [the `aws-actions/amazon-ecs-render-task-definition` action](https://github.com/aws-actions/amazon-ecs-render-task-definition) or equivalent action.
 
 See [action.yml](action.yml) for the full documentation for this action's inputs and outputs.
 
@@ -58,34 +58,31 @@ This action requires the following minimum set of permissions:
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "RegisterTaskDefinition",
-      "Effect": "Allow",
       "Action": ["ecs:RegisterTaskDefinition"],
-      "Resource": "*"
+      "Effect": "Allow",
+      "Resource": "*",
+      "Sid": "RegisterTaskDefinition"
     },
     {
-      "Sid": "ListRulesAndTargets",
+      "Action": ["events:ListRules", "events:ListTargetsByRule"],
       "Effect": "Allow",
-      "Action": [
-        "events:ListRules",
-        "events:ListTargetsByRule"
-      ],
-      "Resource": "*"
+      "Resource": "*",
+      "Sid": "ListRulesAndTargets"
     },
     {
-      "Sid": "PutTargets",
-      "Effect": "Allow",
       "Action": ["events:PutTargets"],
-      "Resource": "arn:aws:events::<aws_account_id>:rule/<cloudwatch_event_rule_name>"
+      "Effect": "Allow",
+      "Resource": "arn:aws:events::<aws_account_id>:rule/<cloudwatch_event_rule_name>",
+      "Sid": "PutTargets"
     },
     {
-      "Sid": "PassRolesInTaskDefinition",
-      "Effect": "Allow",
       "Action": ["iam:PassRole"],
+      "Effect": "Allow",
       "Resource": [
         "arn:aws:iam::<aws_account_id>:role/<task_definition_task_role_name>",
         "arn:aws:iam::<aws_account_id>:role/<task_definition_task_execution_role_name>"
-      ]
+      ],
+      "Sid": "PassRolesInTaskDefinition"
     }
   ]
 }
