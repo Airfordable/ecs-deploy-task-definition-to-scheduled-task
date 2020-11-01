@@ -11,6 +11,10 @@ inputs:
   task-definition:
     description: The path to the ECS task definition file to register
     required: true
+  rule-prefix:
+    default: ''
+    description: The CloudWatch Event name prefix to update
+    required: false
 outputs:
   task-definition-arn:
     description: The ARN of the registered ECS task definition

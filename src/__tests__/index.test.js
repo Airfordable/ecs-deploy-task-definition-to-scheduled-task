@@ -96,6 +96,14 @@ describe('Deploy to ECS', () => {
                 ScheduleExpression: 'rate(15 minutes)',
                 EventBusName: 'default',
               },
+              {
+                Name: 'Prefixed-Task',
+                Arn: 'arn:aws:events:us-east-1:00000000001:rule/Prefixed-Task',
+                State: 'ENABLED',
+                Description: 'Barrr.',
+                ScheduleExpression: 'rate(20 minutes)',
+                EventBusName: 'default',
+              },
             ],
           });
         },
@@ -287,14 +295,21 @@ describe('Deploy to ECS', () => {
     expect(core.setFailed).toHaveBeenCalledTimes(0);
 
     expect(mockCweListRules).toHaveBeenCalledTimes(1);
-    // Only one list rule, so will only get called once.
-    expect(mockCweListTargetsByRule).toHaveBeenCalledTimes(1);
-    expect(mockCwePutTargets).toHaveBeenCalledTimes(1);
-    const callValue = mockCwePutTargets.mock.calls[0][0];
-    expect(callValue.Rule).toEqual('Sync-Task');
-    expect(Array.isArray(callValue.Targets)).toBe(true);
-    expect(callValue.Targets).toHaveLength(1);
-    expect(callValue.Targets[0].Id).toEqual('Foo');
+    // Only two list rules, so will only get called twice.
+    expect(mockCweListTargetsByRule).toHaveBeenCalledTimes(2);
+    expect(mockCwePutTargets).toHaveBeenCalledTimes(2);
+
+    const callValue1 = mockCwePutTargets.mock.calls[0][0];
+    expect(callValue1.Rule).toEqual('Sync-Task');
+    expect(Array.isArray(callValue1.Targets)).toBe(true);
+    expect(callValue1.Targets).toHaveLength(1);
+    expect(callValue1.Targets[0].Id).toEqual('Foo');
+
+    const callValue2 = mockCwePutTargets.mock.calls[1][0];
+    expect(callValue2.Rule).toEqual('Prefixed-Task');
+    expect(Array.isArray(callValue2.Targets)).toBe(true);
+    expect(callValue2.Targets).toHaveLength(1);
+    expect(callValue2.Targets[0].Id).toEqual('Foo');
   });
 
   test('No updates if no related task def rules', async () => {
@@ -307,9 +322,31 @@ describe('Deploy to ECS', () => {
     expect(core.setFailed).toHaveBeenCalledTimes(0);
 
     expect(mockCweListRules).toHaveBeenCalledTimes(1);
-    // Only one list rule, so will only get called once.
-    expect(mockCweListTargetsByRule).toHaveBeenCalledTimes(1);
+    // Only two list rules, so will only get called twice.
+    expect(mockCweListTargetsByRule).toHaveBeenCalledTimes(2);
     expect(mockCwePutTargets).toHaveBeenCalledTimes(0);
+  });
+
+  test('updates prefixed task def rules', async () => {
+    core.getInput = jest
+      .fn()
+      .mockReturnValueOnce('task-definition.json') // task-definition
+      .mockReturnValueOnce('fake-cluster') // cluster - matches above ARN
+      .mockReturnValueOnce('Prefixed-');
+
+    await run();
+    expect(core.setFailed).toHaveBeenCalledTimes(0);
+
+    expect(mockCweListRules).toHaveBeenCalledTimes(1);
+    // Only one prefixed list rule, so will only get called once.
+    expect(mockCweListTargetsByRule).toHaveBeenCalledTimes(1);
+    expect(mockCwePutTargets).toHaveBeenCalledTimes(1);
+
+    const callValue = mockCwePutTargets.mock.calls[0][0];
+    expect(callValue.Rule).toEqual('Prefixed-Task');
+    expect(Array.isArray(callValue.Targets)).toBe(true);
+    expect(callValue.Targets).toHaveLength(1);
+    expect(callValue.Targets[0].Id).toEqual('Foo');
   });
 
   test('error is caught if task def registration fails', async () => {
