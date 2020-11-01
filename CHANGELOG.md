@@ -8,6 +8,6 @@ Initial release of the action. Branched from https://github.com/aws-actions/amaz
 
 ### Features
 
-- Adds in support for ESC scheduled tasks.
-- Adds in tests to validat logic.
+- Adds in support for ECS scheduled tasks.
+- Adds in tests to validate logic.
 - Removes service deployment code.
