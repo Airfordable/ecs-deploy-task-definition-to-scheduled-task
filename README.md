@@ -63,6 +63,21 @@ This action requires the following minimum set of permissions:
       "Resource": "*"
     },
     {
+      "Sid": "ListRulesAndTargets",
+      "Effect": "Allow",
+      "Action": [
+        "events:ListRules",
+        "events:ListTargetsByRule"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "PutTargets",
+      "Effect": "Allow",
+      "Action": ["events:PutTargets"],
+      "Resource": "arn:aws:events::<aws_account_id>:rule/<cloudwatch_event_rule_name>"
+    },
+    {
       "Sid": "PassRolesInTaskDefinition",
       "Effect": "Allow",
       "Action": ["iam:PassRole"],
