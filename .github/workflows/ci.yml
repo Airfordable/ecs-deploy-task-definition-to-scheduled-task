@@ -30,9 +30,9 @@ jobs:
       - name: NPM Install
         run: npm ci
 
-      # - name: Commitlint
-      #   if: ${{ github.event_name == 'pull_request' }}
-      #   run: npx commitlint --from origin/${{ github.base_ref }} --to origin/${{ github.head_ref }}
+      - name: Commitlint
+        if: ${{ github.event_name == 'pull_request' }}
+        run: npx commitlint --from origin/${{ github.base_ref }} --to origin/${{ github.head_ref }}
 
       - name: Lint
         run: npm run lint
@@ -54,4 +54,11 @@ jobs:
         run: npm ci
 
       - name: Test
-        run: npm run test
+        run: npm run test -- --coverage --ci
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage
+          fail_ci_if_error: true
