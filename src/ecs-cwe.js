@@ -58,7 +58,7 @@ function simplifyTaskDefinitionArn(arn) {
 function filterNonEcsClusterTargets(targets, clusterName) {
   // arn:aws:ecs:<REGION>:<ACCOUNT ID>:cluster/<CLUSTER NAME>
   const arnClusterName = `cluster/${clusterName}`;
-  return targets.filter(target => {
+  return targets.filter((target) => {
     const splitArn = target.Arn.split(':');
     return splitArn[2] === 'ecs' && splitArn[5] === arnClusterName;
   });
@@ -77,7 +77,7 @@ function filterNonEcsClusterTargets(targets, clusterName) {
  */
 function filterUnrelatedTaskDefTargets(targets, newTaskDefArn) {
   const newTaskDefArnSimple = simplifyTaskDefinitionArn(newTaskDefArn);
-  return targets.filter(target => {
+  return targets.filter((target) => {
     const arn = target.EcsParameters.TaskDefinitionArn;
     const taskDefArnSimple = simplifyTaskDefinitionArn(arn);
     return taskDefArnSimple === newTaskDefArnSimple;

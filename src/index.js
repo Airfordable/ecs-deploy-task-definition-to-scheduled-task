@@ -128,7 +128,7 @@ async function processCloudwatchEventRule(
   if (!ecsClusterTaskTargets.length) return null;
 
   // Now we just have to update all the targets that survived.
-  const updatedTargets = ecsClusterTaskTargets.map(target => {
+  const updatedTargets = ecsClusterTaskTargets.map((target) => {
     target.EcsParameters.TaskDefinitionArn = newTaskDefArn;
     return target;
   });
@@ -191,10 +191,10 @@ async function run() {
     const rules = (data && data.Rules) || [];
     await Promise.all(
       rules
-        .filter(rule => {
+        .filter((rule) => {
           return rule.Name.startsWith(rulePrefix);
         })
-        .map(rule => {
+        .map((rule) => {
           return processCloudwatchEventRule(cwe, rule, cluster, taskDefArn);
         })
     );
