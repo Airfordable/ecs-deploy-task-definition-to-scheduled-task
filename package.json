@@ -55,7 +55,7 @@
     "@commitlint/cli": "11.0.0",
     "@commitlint/config-conventional": "11.0.0",
     "@vercel/ncc": "0.28.5",
-    "eslint": "7.25.0",
+    "eslint": "7.26.0",
     "eslint-config-prettier": "6.15.0",
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-jest": "24.3.6",
