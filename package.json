@@ -48,7 +48,7 @@
   "homepage": "https://github.com/airfordable/ecs-deploy-task-definition-to-scheduled-task#readme",
   "dependencies": {
     "@actions/core": "^1.2.6",
-    "aws-sdk": "^2.783.0",
+    "aws-sdk": "^2.1203.0",
     "yaml": "^1.10.0"
   },
   "devDependencies": {
