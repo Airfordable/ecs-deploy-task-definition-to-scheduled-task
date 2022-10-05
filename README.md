@@ -25,7 +25,7 @@ The action assumes you have already setup 1 or more tasks to run as a scheduled 
 
 ```yaml
 - name: Deploy to Amazon ECS Scheduled Tasks
-  uses: airfordable/ecs-deploy-task-definition-to-scheduled-task@v2.0.0
+  uses: airfordable/ecs-deploy-task-definition-to-scheduled-task@v2.1.0
   with:
     cluster: my-cluster (optional, defaults to 'default')
     rule-prefix: my-rule-prefix (optional, defaults to '')
