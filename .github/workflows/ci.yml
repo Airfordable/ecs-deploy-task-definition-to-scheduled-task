@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0
 
       - name: NPM Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: NPM Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           key: ${{ runner.os }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
           path: ~/.npm
