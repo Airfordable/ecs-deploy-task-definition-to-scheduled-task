@@ -52,7 +52,7 @@
     "yaml": "^2.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "17.7.1",
+    "@commitlint/cli": "17.8.1",
     "@commitlint/config-conventional": "11.0.0",
     "@vercel/ncc": "0.38.1",
     "eslint": "7.32.0",
