@@ -19,5 +19,5 @@ outputs:
   task-definition-arn:
     description: The ARN of the registered ECS task definition
 runs:
-  using: node12
+  using: node16
   main: dist/index.js
