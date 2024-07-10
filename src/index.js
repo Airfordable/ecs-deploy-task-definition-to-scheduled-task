@@ -1,4 +1,6 @@
-const aws = require('aws-sdk');
+const { CloudWatchEvents } = require('@aws-sdk/client-cloudwatch-events');
+const { ECS } = require('@aws-sdk/client-ecs');
+
 const core = require('@actions/core');
 const ecsCwe = require('./ecs-cwe');
 const fs = require('fs');
@@ -97,8 +99,7 @@ async function processCloudwatchEventRule(
   const data = await cwe
     .listTargetsByRule({
       Rule: ruleName,
-    })
-    .promise();
+    });
   const ruleTargets = data && data.Targets;
   core.debug(`Rule targets for ${ruleName}: ${JSON.stringify(ruleTargets)}`);
 
@@ -140,8 +141,7 @@ async function processCloudwatchEventRule(
     .putTargets({
       Rule: ruleName,
       Targets: updatedTargets,
-    })
-    .promise();
+    });
 }
 
 async function run() {
@@ -150,8 +150,8 @@ async function run() {
       customUserAgent: 'amazon-ecs-deploy-task-definition-for-github-actions',
     };
 
-    const ecs = new aws.ECS(awsCommonOptions);
-    const cwe = new aws.CloudWatchEvents(awsCommonOptions);
+    const ecs = new ECS(awsCommonOptions);
+    const cwe = new CloudWatchEvents(awsCommonOptions);
 
     // Get inputs
     const taskDefinitionFile = core.getInput('task-definition', {
@@ -172,8 +172,7 @@ async function run() {
     let registerResponse;
     try {
       registerResponse = await ecs
-        .registerTaskDefinition(taskDefContents)
-        .promise();
+        .registerTaskDefinition(taskDefContents);
       core.debug(`Register response: ${JSON.stringify(registerResponse)}`);
     } catch (error) {
       core.setFailed(
@@ -187,7 +186,7 @@ async function run() {
     core.setOutput('task-definition-arn', taskDefArn);
 
     // TODO: Batch this?
-    const data = await cwe.listRules().promise();
+    const data = await cwe.listRules();
     const rules = (data && data.Rules) || [];
     await Promise.all(
       rules
