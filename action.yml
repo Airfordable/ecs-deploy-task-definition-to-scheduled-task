@@ -1,4 +1,4 @@
-name: ECS "Deploy Task Definition To Scheduled Task" Action for GitHub Actions
+name: ECS "Deploy Task Definition To Scheduled Task" Action for GitHub Actions (Supports ARM64)
 description: Registers an Amazon ECS task definition & deploys it to related ECS scheduled tasks
 branding:
   color: orange
