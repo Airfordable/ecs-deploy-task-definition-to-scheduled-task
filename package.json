@@ -65,7 +65,7 @@
     "jest-environment-node": "26.6.2",
     "lint-staged": "11.2.6",
     "npm-run-all2": "5.0.2",
-    "prettier": "2.2.1"
+    "prettier": "2.8.8"
   },
   "commitlint": {
     "extends": [
