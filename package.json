@@ -54,7 +54,7 @@
   "devDependencies": {
     "@commitlint/cli": "17.8.1",
     "@commitlint/config-conventional": "11.0.0",
-    "@vercel/ncc": "0.38.2",
+    "@vercel/ncc": "0.38.3",
     "eslint": "7.32.0",
     "eslint-config-prettier": "6.15.0",
     "eslint-plugin-import": "2.31.0",
