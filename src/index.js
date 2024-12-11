@@ -96,10 +96,9 @@ async function processCloudwatchEventRule(
   const ruleName = rule.Name;
   core.debug(`Looking up Targets for rule ${ruleName}`);
 
-  const data = await cwe
-    .listTargetsByRule({
-      Rule: ruleName,
-    });
+  const data = await cwe.listTargetsByRule({
+    Rule: ruleName,
+  });
   const ruleTargets = data && data.Targets;
   core.debug(`Rule targets for ${ruleName}: ${JSON.stringify(ruleTargets)}`);
 
@@ -137,11 +136,10 @@ async function processCloudwatchEventRule(
     `Updated targets for ${ruleName}: ${JSON.stringify(updatedTargets)}`
   );
 
-  return cwe
-    .putTargets({
-      Rule: ruleName,
-      Targets: updatedTargets,
-    });
+  return cwe.putTargets({
+    Rule: ruleName,
+    Targets: updatedTargets,
+  });
 }
 
 async function run() {
@@ -171,8 +169,7 @@ async function run() {
     );
     let registerResponse;
     try {
-      registerResponse = await ecs
-        .registerTaskDefinition(taskDefContents);
+      registerResponse = await ecs.registerTaskDefinition(taskDefContents);
       core.debug(`Register response: ${JSON.stringify(registerResponse)}`);
     } catch (error) {
       core.setFailed(
